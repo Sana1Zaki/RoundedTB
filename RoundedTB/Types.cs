@@ -44,6 +44,8 @@ namespace RoundedTB
             public bool FillOnTaskSwitch {  get; set; }
             public bool ShowSegmentsOnHover { get; set; }
             public int AutoHide { get; set; }
+            public bool EnableBorder { get; set; }
+            public int BorderWidth { get; set; }
         }
 
         public class EffectiveRegion

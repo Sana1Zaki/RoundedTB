@@ -95,6 +95,12 @@
                     <ComboBoxItem>[unavailable]</ComboBoxItem>
                 </ComboBox>
             </Grid>
+
+            <Grid Margin="0,0,10,143" HorizontalAlignment="Right" Width="133" Height="50" VerticalAlignment="Bottom">
+                <CheckBox x:Name="borderCheckBox" Content="Enable border" VerticalAlignment="Top"/>
+                <TextBox x:Name="borderWidthInput" Margin="65,22,0,0" Height="22" VerticalAlignment="Top" Text="1" Width="68"/>
+                <Label Content="Width" Margin="0,21,0,0" Height="22" VerticalAlignment="Top"/>
+            </Grid>
             <Rectangle HorizontalAlignment="Center" Margin="0,262,0,0" Stroke="#4C909090" Width="698" RadiusX="1" RadiusY="1.5" Height="1" VerticalAlignment="Top"/>
 
         </Grid>

@@ -167,14 +167,16 @@ namespace RoundedTB
         {
             try
             {
+                int borderInset = settings.EnableBorder ? Convert.ToInt32(settings.BorderWidth * taskbar.ScaleFactor) : 0;
+
                 // Create an effective region to be applied to the taskbar
                 Types.EffectiveRegion taskbarEffectiveRegion = new Types.EffectiveRegion
                 {
                     CornerRadius = Convert.ToInt32(settings.SimpleTaskbarLayout.CornerRadius * taskbar.ScaleFactor),
-                    Top = Convert.ToInt32(settings.SimpleTaskbarLayout.MarginTop * taskbar.ScaleFactor),
-                    Left = Convert.ToInt32(settings.SimpleTaskbarLayout.MarginLeft * taskbar.ScaleFactor),
-                    Width = Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.SimpleTaskbarLayout.MarginRight * taskbar.ScaleFactor)) + 1,
-                    Height = Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.SimpleTaskbarLayout.MarginBottom * taskbar.ScaleFactor)) + 1
+                    Top = Convert.ToInt32(settings.SimpleTaskbarLayout.MarginTop * taskbar.ScaleFactor) + borderInset,
+                    Left = Convert.ToInt32(settings.SimpleTaskbarLayout.MarginLeft * taskbar.ScaleFactor) + borderInset,
+                    Width = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.SimpleTaskbarLayout.MarginRight * taskbar.ScaleFactor)) + 1 - (borderInset * 2)),
+                    Height = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.SimpleTaskbarLayout.MarginBottom * taskbar.ScaleFactor)) + 1 - (borderInset * 2))
                 };
 
                 IntPtr region = LocalPInvoke.CreateRoundRectRgn(taskbarEffectiveRegion.Left, taskbarEffectiveRegion.Top, taskbarEffectiveRegion.Width, taskbarEffectiveRegion.Height, taskbarEffectiveRegion.CornerRadius, taskbarEffectiveRegion.CornerRadius);
@@ -204,47 +206,58 @@ namespace RoundedTB
                 IntPtr mainRegion;
                 IntPtr workingRegion = LocalPInvoke.CreateRoundRectRgn(1, 1, 1, 1, 0, 0);
                 int centredDistanceFromEdge = 0;
+                int borderInset = settings.EnableBorder ? Convert.ToInt32(settings.BorderWidth * taskbar.ScaleFactor) : 0;
 
                 // Create an effective region to be applied to the taskbar for the applist
                 Types.EffectiveRegion taskbarEffectiveRegion = new Types.EffectiveRegion
                 {
                     CornerRadius = Convert.ToInt32(settings.DynamicAppListLayout.CornerRadius * taskbar.ScaleFactor),
-                    Top = Convert.ToInt32(settings.DynamicAppListLayout.MarginTop * taskbar.ScaleFactor),
-                    Left = Convert.ToInt32(settings.DynamicAppListLayout.MarginLeft * taskbar.ScaleFactor),
-                    Width = Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor)) + 1,
-                    Height = Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicAppListLayout.MarginBottom * taskbar.ScaleFactor)) + 1
+                    Top = Convert.ToInt32(settings.DynamicAppListLayout.MarginTop * taskbar.ScaleFactor) + borderInset,
+                    Left = Convert.ToInt32(settings.DynamicAppListLayout.MarginLeft * taskbar.ScaleFactor) + borderInset,
+                    Width = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor)) + 1 - (borderInset * 2)),
+                    Height = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicAppListLayout.MarginBottom * taskbar.ScaleFactor)) + 1 - (borderInset * 2))
                 };
 
                 // Create an effective region to be applied to the taskbar for the applist
                 Types.EffectiveRegion centredEffectiveRegion = new Types.EffectiveRegion
                 {
                     CornerRadius = Convert.ToInt32(settings.DynamicAppListLayout.CornerRadius * taskbar.ScaleFactor),
-                    Top = Convert.ToInt32(settings.DynamicAppListLayout.MarginTop * taskbar.ScaleFactor),
-                    Left = Convert.ToInt32(settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor) - 1,
-                    Width = Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor)) + 1,
-                    Height = Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicAppListLayout.MarginBottom * taskbar.ScaleFactor)) + 1
+                    Top = Convert.ToInt32(settings.DynamicAppListLayout.MarginTop * taskbar.ScaleFactor) + borderInset,
+                    Left = Convert.ToInt32(settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor) - 1 + borderInset,
+                    Width = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicAppListLayout.MarginRight * taskbar.ScaleFactor)) + 1 - (borderInset * 2)),
+                    Height = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicAppListLayout.MarginBottom * taskbar.ScaleFactor)) + 1 - (borderInset * 2))
                 };
 
                 // Create an effective region to be applied to the taskbar for the tray
                 Types.EffectiveRegion trayEffectiveRegion = new Types.EffectiveRegion
                 {
                     CornerRadius = Convert.ToInt32(settings.DynamicTrayLayout.CornerRadius * taskbar.ScaleFactor),
-                    Top = Convert.ToInt32(settings.DynamicTrayLayout.MarginTop * taskbar.ScaleFactor),
-                    Left = Convert.ToInt32((settings.DynamicTrayLayout.MarginLeft * taskbar.ScaleFactor) - (3 * taskbar.ScaleFactor)), // Add extra margin for taskbar left as there's no "padding" provided by Windows and always looks weird as soon as you trim it otherwise.
-                    Width = Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicTrayLayout.MarginRight * taskbar.ScaleFactor)) + 1,
-                    Height = Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicTrayLayout.MarginBottom * taskbar.ScaleFactor)) + 1
+                    Top = Convert.ToInt32(settings.DynamicTrayLayout.MarginTop * taskbar.ScaleFactor) + borderInset,
+                    Left = Convert.ToInt32((settings.DynamicTrayLayout.MarginLeft * taskbar.ScaleFactor) - (3 * taskbar.ScaleFactor)) + borderInset, // Add extra margin for taskbar left as there's no "padding" provided by Windows and always looks weird as soon as you trim it otherwise.
+                    Width = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Right - taskbar.TaskbarRect.Left - (settings.DynamicTrayLayout.MarginRight * taskbar.ScaleFactor)) + 1 - (borderInset * 2)),
+                    Height = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicTrayLayout.MarginBottom * taskbar.ScaleFactor)) + 1 - (borderInset * 2))
                 };
 
                 Types.EffectiveRegion widgetsEffectiveRegion = new Types.EffectiveRegion
                 {
                     CornerRadius = Convert.ToInt32(settings.DynamicWidgetsLayout.CornerRadius * taskbar.ScaleFactor),
-                    Top = Convert.ToInt32(settings.DynamicWidgetsLayout.MarginTop * taskbar.ScaleFactor),
-                    Left = Convert.ToInt32(settings.DynamicWidgetsLayout.MarginLeft * taskbar.ScaleFactor),
-                    Width = Convert.ToInt32(168 * taskbar.ScaleFactor - (settings.DynamicWidgetsLayout.MarginRight * taskbar.ScaleFactor)) + 1,
-                    Height = Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicWidgetsLayout.MarginBottom * taskbar.ScaleFactor)) + 1
+                    Top = Convert.ToInt32(settings.DynamicWidgetsLayout.MarginTop * taskbar.ScaleFactor) + borderInset,
+                    Left = Convert.ToInt32(settings.DynamicWidgetsLayout.MarginLeft * taskbar.ScaleFactor) + borderInset,
+                    Width = Math.Max(2, Convert.ToInt32(168 * taskbar.ScaleFactor - (settings.DynamicWidgetsLayout.MarginRight * taskbar.ScaleFactor)) + 1 - (borderInset * 2)),
+                    Height = Math.Max(2, Convert.ToInt32(taskbar.TaskbarRect.Bottom - taskbar.TaskbarRect.Top - (settings.DynamicWidgetsLayout.MarginBottom * taskbar.ScaleFactor)) + 1 - (borderInset * 2))
                 };
 
-                centredDistanceFromEdge = taskbar.TaskbarRect.Right - taskbar.AppListRect.Right - Convert.ToInt32(2 * taskbar.ScaleFactor);
+                // For Windows 11 with native centred taskbar, use the left-edge distance since
+                // Windows has already positioned the app list symmetrically. This avoids
+                // conflicting with Windows' own alignment and gives a more accurate pill position.
+                if (settings.IsCentred && settings.IsWindows11)
+                {
+                    centredDistanceFromEdge = taskbar.AppListRect.Left - taskbar.TaskbarRect.Left - Convert.ToInt32(2 * taskbar.ScaleFactor);
+                }
+                else
+                {
+                    centredDistanceFromEdge = taskbar.TaskbarRect.Right - taskbar.AppListRect.Right - Convert.ToInt32(2 * taskbar.ScaleFactor);
+                }
 
                 // If on Windows 10, add an extra 20 logical pixels for the grabhandle
                 if (!settings.IsWindows11)
@@ -421,6 +434,39 @@ namespace RoundedTB
         }
 
         /// <summary>
+        /// Recursively searches child windows for a window with the specified class name.
+        /// </summary>
+        /// <param name="maxDepth">
+        /// Maximum recursion depth when traversing child windows. The default value of 4
+        /// covers current Windows 10/11 taskbar nesting while keeping lookup cost bounded.
+        /// </param>
+        /// <returns>
+        /// Handle to the found window, or IntPtr.Zero if not found.
+        /// </returns>
+        private static IntPtr FindChildWindow(IntPtr hwndParent, string className, int maxDepth = 4)
+        {
+            if (maxDepth <= 0 || hwndParent == IntPtr.Zero)
+                return IntPtr.Zero;
+
+            // Check direct children first
+            IntPtr hwndChild = LocalPInvoke.FindWindowExA(hwndParent, IntPtr.Zero, className, null);
+            if (hwndChild != IntPtr.Zero)
+                return hwndChild;
+
+            // Enumerate child windows to search recursively
+            IntPtr hwndEnum = LocalPInvoke.FindWindowExA(hwndParent, IntPtr.Zero, null, null);
+            while (hwndEnum != IntPtr.Zero)
+            {
+                IntPtr result = FindChildWindow(hwndEnum, className, maxDepth - 1);
+                if (result != IntPtr.Zero)
+                    return result;
+                hwndEnum = LocalPInvoke.FindWindowExA(hwndParent, hwndEnum, null, null);
+            }
+
+            return IntPtr.Zero;
+        }
+
+        /// <summary>
         /// Collects information on any currently-present taskbars.
         /// </summary>
         /// <returns>
@@ -435,7 +481,43 @@ namespace RoundedTB
             IntPtr hrgnMain = IntPtr.Zero; // Set recovery region to IntPtr.Zero
             IntPtr hwndTray = LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "TrayNotifyWnd", null); // Get handle to the main taskbar's tray
             LocalPInvoke.GetWindowRect(hwndTray, out LocalPInvoke.RECT rectTray); // Get the RECT for the main taskbar's tray
-            IntPtr hwndAppList = LocalPInvoke.FindWindowExA(LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "ReBarWindow32", null), IntPtr.Zero, "MSTaskSwWClass", null); // Get the handle to the main taskbar's app list
+
+            // Try the classic hierarchy first: ReBarWindow32 -> MSTaskSwWClass
+            IntPtr hwndReBar = LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "ReBarWindow32", null);
+            IntPtr hwndAppList = LocalPInvoke.FindWindowExA(hwndReBar, IntPtr.Zero, "MSTaskSwWClass", null);
+
+            // Fallback for Windows 11 22H2+: MSTaskSwWClass may be a direct child of Shell_TrayWnd
+            if (hwndAppList == IntPtr.Zero)
+            {
+                hwndAppList = LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "MSTaskSwWClass", null);
+                if (hwndAppList != IntPtr.Zero)
+                    Debug.WriteLine("hwndAppList found via fallback 1: direct MSTaskSwWClass child");
+            }
+
+            // Fallback: WorkerW -> MSTaskListWClass (used in some Windows 11 configurations)
+            if (hwndAppList == IntPtr.Zero)
+            {
+                IntPtr hwndWorkerW = LocalPInvoke.FindWindowExA(hwndMain, IntPtr.Zero, "WorkerW", null);
+                hwndAppList = LocalPInvoke.FindWindowExA(hwndWorkerW, IntPtr.Zero, "MSTaskListWClass", null);
+                if (hwndAppList != IntPtr.Zero)
+                    Debug.WriteLine("hwndAppList found via fallback 2: WorkerW -> MSTaskListWClass");
+            }
+
+            // Last resort: recursive search through the child window tree
+            if (hwndAppList == IntPtr.Zero)
+            {
+                hwndAppList = FindChildWindow(hwndMain, "MSTaskSwWClass");
+                if (hwndAppList != IntPtr.Zero)
+                    Debug.WriteLine("hwndAppList found via fallback 3: recursive MSTaskSwWClass");
+            }
+            if (hwndAppList == IntPtr.Zero)
+            {
+                hwndAppList = FindChildWindow(hwndMain, "MSTaskListWClass");
+                if (hwndAppList != IntPtr.Zero)
+                    Debug.WriteLine("hwndAppList found via fallback 4: recursive MSTaskListWClass");
+            }
+
+            Debug.WriteLine($"hwndAppList: {hwndAppList}");
             LocalPInvoke.GetWindowRect(hwndAppList, out LocalPInvoke.RECT rectAppList);// Get the RECT for the main taskbar's app list
 
             retVal.Add(new Types.Taskbar

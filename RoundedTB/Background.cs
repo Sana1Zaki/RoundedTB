@@ -255,7 +255,9 @@ namespace RoundedTB
                                 taskbars[current].Ignored = false;
                                 int isFullTest = newTaskbar.TrayRect.Left - newTaskbar.AppListRect.Right;
                                 mw.interaction.AddLog($"Taskbar: {current} - AppList ends: {newTaskbar.AppListRect.Right} - Tray starts: {newTaskbar.TrayRect.Left} - Total gap: {isFullTest}");
-                                if (!settings.IsDynamic || (isFullTest <= taskbars[current].ScaleFactor * 25 && isFullTest > 0 && newTaskbar.TrayRect.Left != 0))
+                                // Keep a wider full-width tolerance on newer Windows 11 taskbar layouts/high DPI to
+                                // avoid flickering fallback from dynamic mode when the app-list/tray gap is slightly larger.
+                                if (!settings.IsDynamic || (isFullTest <= taskbars[current].ScaleFactor * 75 && isFullTest > 0 && newTaskbar.TrayRect.Left != 0))
                                 {
                                     // Add the rect changes to the temporary list of taskbars
                                     taskbars[current].TaskbarRect = newTaskbar.TaskbarRect;
