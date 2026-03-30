@@ -18,8 +18,14 @@ if ($Package) {
 
 Write-Host "Building RoundedTB ($Configuration|$Platform)..." -ForegroundColor Cyan
 msbuild "$repoRoot/RoundedTB.sln" /restore /p:Configuration=$Configuration /p:Platform=$Platform /p:OutputPath="$appOutput\" /verbosity:minimal
+if ($LASTEXITCODE -ne 0) {
+    throw "RoundedTB build failed with exit code $LASTEXITCODE."
+}
 
 if ($Package) {
     Write-Host "Building MSIX package..." -ForegroundColor Cyan
     msbuild "$repoRoot/PackagingProject/RoundedTB.Package.wapproj" /restore /p:Configuration=$Configuration /p:Platform=$Platform /p:AppxPackageDir="$packageOutput\\" /p:GenerateAppxPackageOnBuild=true /verbosity:minimal
+    if ($LASTEXITCODE -ne 0) {
+        throw "Packaging build failed with exit code $LASTEXITCODE."
+    }
 }
