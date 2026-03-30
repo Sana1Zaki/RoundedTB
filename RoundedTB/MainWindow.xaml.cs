@@ -173,7 +173,9 @@ namespace RoundedTB
                         FillOnMaximise = true,
                         FillOnTaskSwitch = true,
                         ShowSegmentsOnHover = false,
-                        AutoHide = 0
+                        AutoHide = 0,
+                        EnableBorder = false,
+                        BorderWidth = 1
                     };
                 }
                 else // Default settings for Windows 10
@@ -194,7 +196,9 @@ namespace RoundedTB
                         FillOnMaximise = true,
                         FillOnTaskSwitch = false,
                         ShowSegmentsOnHover = false,
-                        AutoHide = 0
+                        AutoHide = 0,
+                        EnableBorder = false,
+                        BorderWidth = 1
                     };
                 }
             }
@@ -204,6 +208,10 @@ namespace RoundedTB
                 activeSettings.IsNotFirstLaunch = false;
             }
             activeSettings.Version = version;
+            if (activeSettings.BorderWidth < 1)
+            {
+                activeSettings.BorderWidth = 1;
+            }
 
 
             interaction.AddLog($"Settings loaded:");
@@ -286,6 +294,8 @@ namespace RoundedTB
             showSegmentsOnHoverCheckBox.IsChecked = activeSettings.ShowSegmentsOnHover;
             compositionFixCheckBox.IsChecked = activeSettings.CompositionCompat;
             autoHideComboBox.SelectedIndex = activeSettings.AutoHide;
+            borderCheckBox.IsChecked = activeSettings.EnableBorder;
+            borderWidthInput.Text = activeSettings.BorderWidth.ToString();
             taskbarDetails = Taskbar.GenerateTaskbarInfo();
 
             ApplyButton_Click(null, null);
@@ -469,6 +479,21 @@ namespace RoundedTB
             activeSettings.FillOnMaximise = (bool)fillMaximisedCheckBox.IsChecked;
             activeSettings.FillOnTaskSwitch = (bool)fillAltTabCheckBox.IsChecked;
             activeSettings.ShowSegmentsOnHover = (bool)showSegmentsOnHoverCheckBox.IsChecked;
+            activeSettings.EnableBorder = (bool)borderCheckBox.IsChecked;
+            if (!int.TryParse(borderWidthInput.Text, out int borderWidth))
+            {
+                borderWidth = 1;
+            }
+            if (borderWidth < 1)
+            {
+                borderWidth = 1;
+            }
+            if (borderWidth > 20)
+            {
+                borderWidth = 20;
+            }
+            activeSettings.BorderWidth = borderWidth;
+            borderWidthInput.Text = borderWidth.ToString();
 
             try
             {
