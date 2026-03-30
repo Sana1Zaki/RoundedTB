@@ -9,6 +9,13 @@
 ## How do I get it?
 The easiest way to download RoundedTB is from the [Microsoft Store](https://www.microsoft.com/store/productId/9MTFTXSJ9M7F). You can also download the latest version from the Releases tab, unzip it and run `RoundedTB.exe`. If you're a madman, you can compile it yourself or check out the latest [Canary build](https://nightly.link/torchgm/RoundedTB/workflows/ci/master/rtb-artifacts.zip) (note these can be very unfinished, buggy and unstable).
 
+## Building (developers)
+RoundedTB targets `net6.0-windows` and needs the Windows Desktop SDK plus the Windows 10 (19041) SDK. Build and packaging are only supported on Windows using Visual Studio/MSBuild.
+
+1. Open a Developer PowerShell prompt where MSBuild and the Windows SDK are available.
+2. Run `.\build.ps1 -Configuration Release -Platform x64` to produce binaries under `build/app`.
+3. Add `-Package` to also generate the MSIX bundle via the packaging project, which is written to `build/package`.
+
 ## To use
 ### Basic options
 The simplest way to use RoundedTB is by simply entering a margin and corner radius.
@@ -59,4 +66,3 @@ Split mode has a couple of limitations and requires a small amount of setup to g
 Watch the following video for a guide on setting up split mode:
 
 https://user-images.githubusercontent.com/31840547/134795022-1312d011-40f2-4641-8c8d-3d6c0e752747.mp4
-
